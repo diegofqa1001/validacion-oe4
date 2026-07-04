@@ -1,0 +1,9 @@
+perfil,s=-3,s=-2,s=-1,s=+0,s=+1,s=+2,s=+3
+Guardian,0,0,0,0,0,0,0
+Sentinel,-1,-1,-1,0,0,1,1
+Pragmatist,-1,-1,-1,0,1,1,1
+Analyst,-2,-2,-1,0,1,1,1
+Strategist,-2,-2,-1,0,1,1,1
+Adventurer,-2,-2,-1,0,1,1,1
+Innovator,-1,-1,-1,0,0,0,0
+Visionary,-1,-1,-1,0,0,0,0
