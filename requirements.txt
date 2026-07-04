@@ -1,0 +1,9 @@
+numpy>=1.24
+pandas>=2.0
+matplotlib>=3.7
+scipy>=1.10        # opcional (hay fallback numpy)
+scikit-learn>=1.3  # opcional (hay fallback numpy)
+yfinance>=0.2
+pytest>=7.0
+# motor-owa-v2: instalar desde la carpeta hermana o desde GitHub
+# pip install -e ../motor-owa-v2
