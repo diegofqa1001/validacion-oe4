@@ -22,6 +22,11 @@ dependencia: este repo contiene el *experimento*, aquel contiene el *artefacto*.
 4. **Estabilidad**: perturbaciones de ruido sobre los criterios (consistencia
    ordinal por nivel de ruido), estrés (peor subperiodo de caída del mercado)
    y sensibilidad al cambio de perfil (matriz de migraciones).
+5. **Validación del componente emocional (OE4-E)**: dos poblaciones de
+   decisores sintéticos (lógicos vs. emocionales) con re-elicitación
+   declarada sobre el mercado real US; el pipeline separa las poblaciones
+   por la brecha emocional ε y recupera la aversión a la pérdida sembrada
+   (λ̂ ≈ 2.17 vs. 2.25) en el grupo de control (`scripts/run_emocional.py`).
 
 ## Uso
 
@@ -30,6 +35,7 @@ pip install -r requirements.txt
 pip install -e ../motor-owa-v2          # dependencia
 pytest                                   # 8 pruebas
 python scripts/run_oe4.py --market both # resultados citables (CSV en results/)
+python scripts/run_emocional.py          # experimento del componente emocional
 ```
 
 ## Licencia
