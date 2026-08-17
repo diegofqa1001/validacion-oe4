@@ -53,6 +53,22 @@ dependencia: este repo contiene el *experimento*, aquel contiene el *artefacto*.
 > repositorio; los CSV de resultados ya publicados en `results/` sí lo están
 > y son la fuente citable mientras ese snapshot no se incorpore.
 
+> **Actualización (2026-08-17, a pedido del autor).** La Figura 7.1 pasó de
+> un diagrama de barras (volatilidad realizada *promedio* por perfil durante
+> el estrés) a un diagrama de líneas: la trayectoria de valor acumulado
+> día a día de las ocho carteras de perfil, superpuesta con la de los cinco
+> comparadores del anteproyecto (1/N, mínima varianza, máximo Sharpe, MLP,
+> ANFIS) sobre la MISMA ventana de estrés — así la comparación ya no es solo
+> entre perfiles, sino también entre perfiles y modelos econométricos.
+> `oe4.stability.stress_trajectories` encadena el retorno realizado día a día
+> en la misma rejilla de rebalanceo que `stress_coherence` (evita doble
+> cómputo y garantiza que ambas figuras describan el mismo subperiodo);
+> `pipeline.py` persiste el resultado en
+> `results/{market}_estres_trayectoria.csv` y `scripts/fig_estres.py` se
+> reescribió para leer de ahí. La cifra de coherencia de Spearman en el
+> título no cambió: describe el promedio de volatilidad del subperiodo, no
+> la trayectoria diaria, y ambas fuentes son consistentes entre sí.
+
 ## Uso
 
 ```bash
