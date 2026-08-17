@@ -94,13 +94,33 @@ def run_market(prices: pd.DataFrame, market: str, outdir: str,
     noise.to_csv(os.path.join(outdir, f"{market}_estabilidad_ruido.csv"),
                  index=False)
     stress = stress_coherence(eng)
+    # La matriz de migracion depende solo de (kappa, loss_lambda), no de los
+    # precios: es identica en ambos mercados. Se guarda una sola vez con
+    # nombre sin prefijo de mercado (corrige duplicado redundante 2026-08-17;
+    # ver scripts/fig_migracion.py).
     sens = profile_sensitivity_matrix(kappa=cfg.kappa,
                                       loss_lambda=cfg.loss_lambda)
-    sens.to_csv(os.path.join(outdir, f"{market}_sensibilidad_perfil.csv"))
+    sens_path = os.path.join(outdir, "sensibilidad_perfil.csv")
+    if not os.path.exists(sens_path):
+        sens.to_csv(sens_path)
     pd.DataFrame([{"coherence_vol_total": m["coherence_vol"],
                    "coherence_ret_total": m["coherence_ret"],
                    "stress_coherence_vol": stress["stress_coherence_vol"]}]
                  ).to_csv(os.path.join(outdir, f"{market}_coherencia.csv"),
                           index=False)
+    # Persistencia completa del estres (corrige brecha de reproducibilidad
+    # 2026-08-17: antes solo se guardaba stress_coherence_vol dentro de
+    # {market}_coherencia.csv; stress_start/stress_end/stress_mean_vols se
+    # calculaban pero se descartaban, de modo que la Figura 7.1 (escalera
+    # de volatilidad realizada por perfil bajo estres) no tenia una fuente
+    # reproducible en el repositorio -- ver scripts/fig_estres.py).
+    if "stress_mean_vols" in stress:
+        pd.DataFrame([{"stress_coherence_vol": stress["stress_coherence_vol"],
+                       "stress_start": stress["stress_start"],
+                       "stress_end": stress["stress_end"],
+                       **{f"vol_{k}": v for k, v in
+                          stress["stress_mean_vols"].items()}}]
+                     ).to_csv(os.path.join(outdir, f"{market}_estres.csv"),
+                              index=False)
     return {"motor": m, "comparadores": resumen, "ruido": noise,
             "estres": stress, "sensibilidad": sens}
