@@ -17,7 +17,7 @@ import numpy as np
 import pandas as pd
 
 __all__ = ["ranking_noise_stability", "worst_window", "stress_coherence",
-           "profile_sensitivity_matrix"]
+           "stress_trajectories", "profile_sensitivity_matrix"]
 
 
 def ranking_noise_stability(prices: pd.DataFrame, t: int, profile,
@@ -79,6 +79,62 @@ def stress_coherence(engine, width: int = 252) -> Dict[str, object]:
             "stress_start": int(a), "stress_end": int(b),
             "stress_mean_vols": dict(zip([p.name for p in engine.profiles],
                                          mean_v))}
+
+
+def stress_trajectories(engine, width: int = 252) -> Dict[str, pd.Series]:
+    """Trayectoria de valor acumulado (base 1.0) de las 8 carteras de perfil
+    y de los 5 comparadores del anteproyecto, encadenada dia a dia SOLO en
+    el peor subperiodo del mercado (mismo peor subperiodo que
+    stress_coherence: ventana de maxima caida del indice 1/N).
+
+    Cada estrategia se rebalancea en la misma rejilla que stress_coherence
+    (paso = horizon dentro de la ventana de estres); dentro de cada tramo
+    entre rebalanceos, el retorno diario realizado de la cartera compone el
+    valor acumulado. Es la contraparte temporal (curva de valor/drawdown)
+    de la Figura 7.1: la version en barras solo reporta el promedio de
+    volatilidad por perfil durante el estres, esta reporta la trayectoria
+    completa dia a dia, y agrega los 5 comparadores (1/N, minima varianza,
+    maximo Sharpe, MLP, ANFIS) sobre la MISMA ventana para comparacion
+    directa perfil-vs-modelo econometrico.
+    """
+    from .benchmarks import (anfis_portfolio, equal_weight, max_sharpe,
+                             min_variance, mlp_portfolio)
+    prices, cfg = engine.prices, engine.cfg
+    a, b = worst_window(prices, width)
+    lo = max(cfg.lookback, a)
+    grid = list(range(lo, max(lo + 1, b - cfg.horizon), cfg.horizon))
+    if not grid:
+        return {}
+
+    def _chain(weight_fn) -> pd.Series:
+        vals, idx = [1.0], [prices.index[grid[0]]]
+        for t in grid:
+            w = weight_fn(t)
+            seg = prices[w.index].iloc[t:t + cfg.horizon].pct_change().dropna()
+            for date, r in (seg @ w.values).items():
+                vals.append(vals[-1] * (1.0 + float(r)))
+                idx.append(date)
+        return pd.Series(vals, index=[idx[0]] + list(idx[1:]))
+
+    out: Dict[str, pd.Series] = {}
+    for p in engine.profiles:
+        out[f"OWA-{p.name}"] = _chain(lambda t, p=p: engine.builder.build(p, t).weights)
+
+    bench_fns = {
+        "1/N": lambda rets, t: equal_weight(rets),
+        "MinVar": lambda rets, t: min_variance(rets, cfg.max_weight),
+        "MaxSharpe": lambda rets, t: max_sharpe(rets, cfg.max_weight),
+        "MLP": lambda rets, t: mlp_portfolio(prices, t, cfg.lookback,
+                                             cfg.horizon, cfg.top_n, cfg.max_weight),
+        "ANFIS": lambda rets, t: anfis_portfolio(prices, t, cfg.lookback,
+                                                 cfg.horizon, cfg.top_n, cfg.max_weight),
+    }
+    for name, fn in bench_fns.items():
+        def weight_fn(t, fn=fn):
+            rets_w = prices.iloc[t - cfg.lookback:t].pct_change().dropna()
+            return fn(rets_w, t)
+        out[name] = _chain(weight_fn)
+    return out
 
 
 def profile_sensitivity_matrix(surprises=(-3, -2, -1, 0, 1, 2, 3),

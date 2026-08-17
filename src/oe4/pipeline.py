@@ -21,7 +21,7 @@ import pandas as pd
 from .benchmarks import (anfis_portfolio, equal_weight, max_sharpe,
                          min_variance, mlp_portfolio)
 from .stability import (profile_sensitivity_matrix, ranking_noise_stability,
-                        stress_coherence)
+                        stress_coherence, stress_trajectories)
 
 _ANNUAL = 252
 
@@ -122,5 +122,14 @@ def run_market(prices: pd.DataFrame, market: str, outdir: str,
                           stress["stress_mean_vols"].items()}}]
                      ).to_csv(os.path.join(outdir, f"{market}_estres.csv"),
                               index=False)
+    # Trayectoria dia a dia de las 8 carteras de perfil y de los 5
+    # comparadores del anteproyecto, SOLO en el peor subperiodo (2026-08-17,
+    # a pedido del autor: la Figura 7.1 pasa de barras -- promedio de
+    # volatilidad -- a un diagrama de lineas que compara perfiles Y modelos
+    # econometricos dia a dia; ver scripts/fig_estres.py).
+    traj = stress_trajectories(eng)
+    if traj:
+        pd.DataFrame(traj).rename_axis("date").to_csv(
+            os.path.join(outdir, f"{market}_estres_trayectoria.csv"))
     return {"motor": m, "comparadores": resumen, "ruido": noise,
-            "estres": stress, "sensibilidad": sens}
+            "estres": stress, "trayectoria_estres": traj, "sensibilidad": sens}
