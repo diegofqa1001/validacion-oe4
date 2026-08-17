@@ -1,2 +1,2 @@
-stress_coherence_vol,stress_start,stress_end
-0.9999999999991271,1764,2016
+stress_coherence_vol,stress_start,stress_end,vol_Guardian,vol_Sentinel,vol_Pragmatist,vol_Analyst,vol_Strategist,vol_Adventurer,vol_Innovator,vol_Visionary
+0.9999999999991271,1764,2016,0.19394889297335327,0.20741014371382618,0.22740392226181716,0.2449898278689139,0.24873321500660991,0.25734778308166567,0.2878069091400672,0.29871955054992144
