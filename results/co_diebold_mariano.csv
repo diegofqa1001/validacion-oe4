@@ -1,9 +1,9 @@
 A,B,DM_HLN,p_valor,n_ventanas
-OWA-Guardian,1/N,-1.302,0.2156,14
-OWA-Guardian,MinVar,-0.807,0.4341,14
-OWA-Pragmatist,1/N,-1.142,0.2741,14
-OWA-Visionary,MaxSharpe,-0.065,0.9489,14
-OWA-Pragmatist,MLP,-0.532,0.6038,14
-OWA-Pragmatist,ANFIS,0.155,0.8794,14
-OWA-Visionary,MLP,1.348,0.2007,14
-OWA-Visionary,ANFIS,2.026,0.0638,14
+OWA-Guardian,1/N,-0.363,0.7237,12
+OWA-Guardian,MinVar,1.662,0.1247,12
+OWA-Pragmatist,1/N,-0.255,0.8033,12
+OWA-Visionary,MaxSharpe,-0.712,0.4915,12
+OWA-Pragmatist,MLP,1.519,0.1569,12
+OWA-Pragmatist,ANFIS,0.241,0.8139,12
+OWA-Visionary,MLP,0.497,0.629,12
+OWA-Visionary,ANFIS,-0.081,0.937,12

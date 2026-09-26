@@ -1,0 +1,25 @@
+archivo,filas_archivo,filas_nuevas,max_dif_abs,columna_max_dif,estado
+co_coherencia_motor.csv,1.0,1.0,0.3809523809520484,coherence_ret,difiere
+co_comp_ampliado_registros.csv,117.0,117.0,0.3910118502328659,vol,difiere
+co_comparadores.csv,13.0,13.0,7.0,n,difiere
+co_comparadores_ampliado.csv,13.0,13.0,2.0,n,difiere
+co_diebold_mariano.csv,8.0,8.0,2.469,DM_HLN,difiere
+co_estabilidad_ruido.csv,3.0,3.0,0.07095238095238099,p05,difiere
+co_estres.csv,1.0,1.0,510.0,stress_start,difiere
+co_estres_trayectoria.csv,,,,,sin filas o columnas comunes
+co_metricas_motor.csv,8.0,8.0,32.1566931913569,mape,difiere
+co_registros_motor.csv,264.0,264.0,0.46787540499333113,vol,difiere
+emocional_individual.csv,60.0,60.0,0.9347748391388677,lambda_hat,difiere
+emocional_resumen.csv,2.0,2.0,1.149568145897284e-06,corr_brecha_sorpresa,reproduce
+reduccion_riesgo_maximo.csv,12.0,12.0,42.797240641933,reduccion_vol_%,difiere
+sensibilidad_perfil.csv,8.0,8.0,0.0,s=-3,reproduce
+us_coherencia_motor.csv,1.0,1.0,0.0,coherence_vol,reproduce
+us_comp_ampliado_registros.csv,169.0,169.0,0.06860222853436972,ret,difiere
+us_comparadores.csv,13.0,13.0,8.0,n,difiere
+us_comparadores_ampliado.csv,13.0,13.0,0.07095554237272217,sharpe_aprox,difiere
+us_diebold_mariano.csv,8.0,8.0,0.29499999999999993,DM_HLN,difiere
+us_estabilidad_ruido.csv,3.0,3.0,0.06216666666666659,p05,difiere
+us_estres.csv,1.0,1.0,0.0077570017422897986,vol_Guardian,difiere
+us_estres_trayectoria.csv,187.0,187.0,0.10871715329381082,MLP,difiere
+us_metricas_motor.csv,8.0,8.0,7.644320115574033e-06,mape,reproduce
+us_registros_motor.csv,344.0,344.0,1.5249759875504698e-05,ret,reproduce
