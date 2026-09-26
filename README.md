@@ -28,6 +28,43 @@ dependencia: este repo contiene el *experimento*, aquel contiene el *artefacto*.
    por la brecha emocional ε y recupera la aversión a la pérdida sembrada
    (λ̂ ≈ 2.17 vs. 2.25) en el grupo de control (`scripts/run_emocional.py`).
 
+> **Calendario de negociación (2026-09-26).** El snapshot aplica la regla de
+> `repo_OWA/src/data.py` (Cap. 5): se descartan (i) los días en que menos de la
+> mitad de los emisores registra volumen positivo y (ii) los días en que todos
+> los emisores repiten el precio del día anterior. En Colombia se descartan
+> 216 + 106 fechas (la fuente rellena los festivos de la BVC con el precio
+> previo); en EE. UU., ninguna. El panel CO pasa de 2 978 a 2 656 jornadas
+> (45 → 40 ventanas; 14 → 12 en los comparadores). Volúmenes versionados en
+> `data/snapshot_oe4/{us,co}_volumen.csv`; regla en `MANIFEST.json`. Las cifras
+> CO de la nota siguiente quedan sustituidas por las de `results/`.
+
+> **Reproducibilidad con datos versionados (2026-09-25).** Los precios de
+> entrada quedan fijados en `data/snapshot_oe4/` (Yahoo Finance, endpoint
+> v8/chart, cierre ajustado; 2015-01-01 a 2026-07-02; 25 activos US y 15 CO,
+> con BCOLOMBIA.CL y PFBCOLOM.CL sin serie; `MANIFEST.json` con fecha de
+> descarga, regla de inclusión y SHA-256; generador
+> `scripts/build_snapshot_oe4.py`). `scripts/reproducir_todo.sh` re-ejecuta
+> todo el protocolo y `scripts/comparar_con_archivo.py` contrasta el resultado
+> con los CSV de julio de 2026, conservados en `results/archivo_2026-07/`
+> (`results/comparacion_archivo_2026-07.csv`). Reproducen dentro de la
+> tolerancia de redondeo: registros y métricas del motor, coherencias +1,000 y
+> +0,929, matriz de migraciones y resumen del experimento OE4-E (λ̂ = 2,17).
+> Difieren y se sustituyen: (i) el comparador ANFIS (y los contrastes DM que lo
+> usan), cuya corrida de julio no es reproducible; 1/N, mínima varianza, máximo
+> Sharpe y MLP reproducen con el backend numpy (`OE4_BACKEND`, por defecto),
+> que es el que los produjo; (ii) la estabilidad ante ruido, cuyo archivo de
+> julio no corresponde al código publicado; (iii) el estrés, porque la rejilla
+> anterior omitía el último trimestre de la ventana (`stability.stress_grid`):
+> en Colombia la ventana completa (2-abr-2019 a 19-mar-2020) incluye el choque
+> de la COVID-19 y la coherencia en estrés pasa de +0,905 a −0,357
+> (−0,976 en el tramo dic-2019 a mar-2020; `results/co_estres_tramos.csv`);
+> en EE. UU. se mantiene en +1,000; (iv) `reduccion_riesgo_maximo.csv`, antes
+> sin generador y con n = 5, ahora lo produce `scripts/run_reduccion_riesgo.py`
+> sobre las 13 y 14 ventanas de la Tabla 7.3. Se añadió
+> `{us,co}_no_inferioridad.csv` (no inferioridad unilateral y TOST con margen
+> δ = 1 y 2 puntos porcentuales por trimestre). Las notas del 17 de agosto que
+> siguen describen el estado anterior.
+
 > **Nota de verificación (añadida 2026-08-17).** Los cinco comparadores del
 > §7.4 de la tesis (1/N, mínima varianza, máximo Sharpe, MLP, ANFIS) y el test
 > de Diebold-Mariano (Tablas 7.3-7.4) ya estaban implementados y se
@@ -75,6 +112,7 @@ dependencia: este repo contiene el *experimento*, aquel contiene el *artefacto*.
 pip install -r requirements.txt
 pip install -e ../motor-owa-v2          # dependencia
 pytest                                   # 8 pruebas
+bash scripts/reproducir_todo.sh          # protocolo completo sobre data/snapshot_oe4
 python scripts/run_oe4.py --market both  # resultados citables (CSV en results/)
 python scripts/run_emocional.py          # experimento del componente emocional
 python scripts/fig_comparacion_modelos.py  # Figura §7.4: comparadores (F29)
