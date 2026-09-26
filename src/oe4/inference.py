@@ -12,7 +12,7 @@ from typing import Sequence, Tuple
 
 import numpy as np
 
-__all__ = ["diebold_mariano"]
+__all__ = ["diebold_mariano", "noninferiority_dm"]
 
 
 def _newey_west_lrv(d: np.ndarray, lag: int) -> float:
@@ -66,3 +66,60 @@ def diebold_mariano(ret_a: Sequence[float], ret_b: Sequence[float],
     dm_hln = dm * c
     p = 2.0 * (1.0 - _t_cdf(abs(dm_hln), n - 1))
     return float(dm_hln), float(min(max(p, 0.0), 1.0))
+
+
+def _t_ppf(q: float, df: int) -> float:
+    """Cuantil t-Student por biseccion sobre _t_cdf (sin scipy)."""
+    lo, hi = -50.0, 50.0
+    for _ in range(200):
+        mid = 0.5 * (lo + hi)
+        if _t_cdf(mid, df) < q:
+            lo = mid
+        else:
+            hi = mid
+    return 0.5 * (lo + hi)
+
+
+def noninferiority_dm(ret_a: Sequence[float], ret_b: Sequence[float],
+                      delta: float, alpha: float = 0.05,
+                      lag: int | None = None) -> dict:
+    """No inferioridad y equivalencia (TOST) de A frente a B con margen delta.
+
+    Mismo estadistico que diebold_mariano (diferencial d = A - B por ventana,
+    varianza de largo plazo Newey-West y correccion HLN), aplicado a las
+    hipotesis desplazadas por el margen:
+
+    * No inferioridad: H0: E[d] <= -delta  vs  H1: E[d] > -delta
+      (contraste unilateral; p_ni < alpha => A no es inferior a B en mas
+      de delta por ventana).
+    * Equivalencia (TOST, Schuirmann, 1987): ademas H0': E[d] >= +delta;
+      p_tost = max(p_ni, p_sup).
+
+    Devuelve tambien el limite inferior unilateral (1 - alpha) de E[d] y el
+    margen minimo delta* = max(0, -limite) con el que se declararia no
+    inferioridad a ese nivel.
+    """
+    a = np.asarray(ret_a, float).ravel()
+    b = np.asarray(ret_b, float).ravel()
+    d = a - b
+    n = d.size
+    if n < 4:
+        raise ValueError("Se requieren >= 4 ventanas emparejadas.")
+    if lag is None:
+        lag = max(1, int(round(4 * (n / 100.0) ** (2.0 / 9.0))))
+    se = math.sqrt(_newey_west_lrv(d, lag) / n)
+    h = 1
+    c = math.sqrt((n + 1 - 2 * h + h * (h - 1) / n) / n)
+    se_eff = se / c                       # error tipico con correccion HLN
+    t_ni = (d.mean() + delta) / se_eff
+    t_sup = (d.mean() - delta) / se_eff
+    p_ni = 1.0 - _t_cdf(t_ni, n - 1)
+    p_sup = _t_cdf(t_sup, n - 1)
+    q = _t_ppf(1.0 - alpha, n - 1)
+    lb = d.mean() - q * se_eff
+    ub = d.mean() + q * se_eff
+    return {"media_dif": float(d.mean()), "ee_hln": float(se_eff),
+            "t_no_inf": float(t_ni), "p_no_inf": float(p_ni),
+            "p_tost": float(max(p_ni, p_sup)),
+            "lim_inf_unilateral": float(lb), "lim_sup_unilateral": float(ub),
+            "delta_min_no_inf": float(max(0.0, -lb)), "n": int(n)}

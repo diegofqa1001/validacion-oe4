@@ -5,12 +5,21 @@ devuelven pesos de cartera sobre el universo, para comparacion justa.
 """
 from __future__ import annotations
 
+import os
 from typing import Optional
 
 import numpy as np
 import pandas as pd
 
 _ANNUAL = 252
+
+#: Backend numerico de los comparadores. "numpy" (defecto) usa las
+#: implementaciones sin dependencias (conjunto activo de Markowitz para
+#: minima varianza y maximo Sharpe; perceptron _TinyMLP), que son las que
+#: produjeron results/{us,co}_comp_ampliado_registros.csv de julio de 2026
+#: (verificado ventana por ventana sobre data/snapshot_oe4). "scipy" usa
+#: SLSQP y scikit-learn; ver la nota de escala en min_variance().
+BACKEND = os.environ.get("OE4_BACKEND", "numpy").lower()
 
 __all__ = ["equal_weight", "min_variance", "max_sharpe", "mlp_portfolio",
            "anfis_portfolio", "_AnfisLite", "_TinyMLP"]
@@ -76,8 +85,14 @@ def min_variance(rets: pd.DataFrame, cap: float = 0.30) -> pd.Series:
     S = rets.cov().values
     n = S.shape[0]
     try:
+        if BACKEND == "numpy":
+            raise ImportError("backend numpy")
         from scipy.optimize import minimize
-        res = minimize(lambda w: w @ S @ w, np.ones(n) / n, method="SLSQP",
+        # Escala anualizada: con la covarianza diaria (~1e-4) el objetivo cae
+        # por debajo de la tolerancia de SLSQP y el optimizador se detiene en
+        # el punto inicial (1/N). Corregido 2026-09-25.
+        S_a = S * _ANNUAL
+        res = minimize(lambda w: w @ S_a @ w, np.ones(n) / n, method="SLSQP",
                        bounds=[(0.0, cap)] * n,
                        constraints=[{"type": "eq",
                                      "fun": lambda w: w.sum() - 1}],
@@ -102,6 +117,8 @@ def max_sharpe(rets: pd.DataFrame, cap: float = 0.30,
         v = np.sqrt(max(w @ S @ w, 1e-12))
         return -(w @ mu) / v
     try:
+        if BACKEND == "numpy":
+            raise ImportError("backend numpy")
         from scipy.optimize import minimize
         res = minimize(neg_sharpe, np.ones(n) / n, method="SLSQP",
                        bounds=[(0.0, cap)] * n,
@@ -153,6 +170,8 @@ def mlp_portfolio(prices: pd.DataFrame, t: int, lookback: int = 126,
     if len(y) < 30:  # historia insuficiente: degrada a 1/N
         return equal_weight(prices.iloc[t - lookback:t].pct_change().dropna())
     try:
+        if BACKEND == "numpy":
+            raise ImportError("backend numpy")
         from sklearn.neural_network import MLPRegressor
         mdl = MLPRegressor(hidden_layer_sizes=(16, 8), max_iter=800,
                            random_state=seed, early_stopping=False)

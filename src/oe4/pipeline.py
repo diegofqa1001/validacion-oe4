@@ -56,7 +56,7 @@ def run_market(prices: pd.DataFrame, market: str, outdir: str,
     m["records"].to_csv(os.path.join(outdir, f"{market}_registros_motor.csv"),
                         index=False)
 
-    # ---- 2. comparadores en la rejilla de validacion (ultimo 30%) ----
+    # ---- 2. comparadores en verificacion + validacion (ultimo 30 %) ----
     step = cfg.horizon
     t_grid = list(range(cfg.lookback, len(prices) - cfg.horizon, step))
     tr, ve, va = split_70_20_10(len(t_grid))
@@ -100,13 +100,14 @@ def run_market(prices: pd.DataFrame, market: str, outdir: str,
     # ver scripts/fig_migracion.py).
     sens = profile_sensitivity_matrix(kappa=cfg.kappa,
                                       loss_lambda=cfg.loss_lambda)
-    sens_path = os.path.join(outdir, "sensibilidad_perfil.csv")
-    if not os.path.exists(sens_path):
-        sens.to_csv(sens_path)
-    pd.DataFrame([{"coherence_vol_total": m["coherence_vol"],
-                   "coherence_ret_total": m["coherence_ret"],
-                   "stress_coherence_vol": stress["stress_coherence_vol"]}]
-                 ).to_csv(os.path.join(outdir, f"{market}_coherencia.csv"),
+    sens.to_csv(os.path.join(outdir, "sensibilidad_perfil.csv"))
+    # Nombre y columnas alineados con los citados en la tesis (2026-09-25):
+    # {market}_coherencia_motor.csv = coherencia de toda la rejilla; la de
+    # estres vive en {market}_estres.csv.
+    pd.DataFrame([{"coherence_vol": m["coherence_vol"],
+                   "coherence_ret": m["coherence_ret"]}]
+                 ).to_csv(os.path.join(outdir,
+                                       f"{market}_coherencia_motor.csv"),
                           index=False)
     # Persistencia completa del estres (corrige brecha de reproducibilidad
     # 2026-08-17: antes solo se guardaba stress_coherence_vol dentro de
@@ -118,10 +119,16 @@ def run_market(prices: pd.DataFrame, market: str, outdir: str,
         pd.DataFrame([{"stress_coherence_vol": stress["stress_coherence_vol"],
                        "stress_start": stress["stress_start"],
                        "stress_end": stress["stress_end"],
+                       "fecha_inicio": str(prices.index[stress["stress_start"]].date()),
+                       "fecha_fin": str(prices.index[stress["stress_end"]].date()),
+                       "n_rebalanceos": len(stress["grid"]),
                        **{f"vol_{k}": v for k, v in
                           stress["stress_mean_vols"].items()}}]
                      ).to_csv(os.path.join(outdir, f"{market}_estres.csv"),
                               index=False)
+    if "tramos" in stress:
+        pd.DataFrame(stress["tramos"]).to_csv(
+            os.path.join(outdir, f"{market}_estres_tramos.csv"), index=False)
     # Trayectoria dia a dia de las 8 carteras de perfil y de los 5
     # comparadores del anteproyecto, SOLO en el peor subperiodo (2026-08-17,
     # a pedido del autor: la Figura 7.1 pasa de barras -- promedio de

@@ -16,7 +16,8 @@ from typing import Dict, List
 import numpy as np
 import pandas as pd
 
-__all__ = ["ranking_noise_stability", "worst_window", "stress_coherence",
+__all__ = ["ranking_noise_stability", "worst_window", "stress_grid",
+           "stress_coherence",
            "stress_trajectories", "profile_sensitivity_matrix"]
 
 
@@ -55,28 +56,56 @@ def worst_window(prices: pd.DataFrame, width: int = 252) -> tuple:
     return max(0, end - width), end
 
 
+def stress_grid(a: int, b: int, lookback: int, horizon: int) -> List[int]:
+    """Rebalanceos del subperiodo de estres [a, b] (indices inclusivos).
+
+    Cubre la ventana COMPLETA: rebalanceo cada ``horizon`` dias desde
+    max(lookback, a) y el ultimo tramo se recorta en b. Cada tramo evalua los
+    retornos diarios de (t, min(t + horizon, b)], de modo que los tramos
+    encadenados cubren (a, b] sin huecos ni solapes.
+
+    Correccion 2026-09-25: la version anterior usaba
+    range(lo, b - horizon, horizon) con tramos iloc[t:t + horizon], que
+    dejaba fuera el ultimo trimestre de la ventana (en Colombia, el choque de
+    febrero-marzo de 2020) y omitia el retorno del dia de cada rebalanceo.
+    """
+    lo = max(lookback, a)
+    return list(range(lo, b, horizon))
+
+
 def stress_coherence(engine, width: int = 252) -> Dict[str, object]:
     """Coherencia orness-vol re-computada SOLO en el peor subperiodo."""
     from motor_owa.validation import coherence_spearman
     a, b = worst_window(engine.prices, width)
-    lo = max(engine.cfg.lookback, a)
-    grid = list(range(lo, max(lo + 1, b - engine.cfg.horizon),
-                      engine.cfg.horizon))
+    grid = stress_grid(a, b, engine.cfg.lookback, engine.cfg.horizon)
     if not grid:
         return {"stress_coherence_vol": float("nan")}
     _ANNUAL = 252
     vols = {p.name: [] for p in engine.profiles}
     for t in grid:
+        t2 = min(t + engine.cfg.horizon, b)
         for p in engine.profiles:
             port = engine.builder.build(p, t)
             seg = engine.prices[port.weights.index].iloc[
-                t:t + engine.cfg.horizon].pct_change().dropna()
+                t:t2 + 1].pct_change().dropna()
             vols[p.name].append(float((seg @ port.weights.values).std()
                                       * np.sqrt(_ANNUAL)))
     alphas = [p.alpha for p in engine.profiles]
     mean_v = [float(np.mean(vols[p.name])) for p in engine.profiles]
+    tramos = []
+    for i, t in enumerate(grid):
+        v_i = [vols[p.name][i] for p in engine.profiles]
+        tramos.append({"t": int(t), "t_fin": int(min(t + engine.cfg.horizon, b)),
+                       "fecha_inicio": str(engine.prices.index[t].date()),
+                       "fecha_fin": str(engine.prices.index[
+                           min(t + engine.cfg.horizon, b)].date()),
+                       "coherencia_vol": coherence_spearman(alphas, v_i),
+                       **{f"vol_{p.name}": v for p, v in
+                          zip(engine.profiles, v_i)}})
     return {"stress_coherence_vol": coherence_spearman(alphas, mean_v),
+            "tramos": tramos,
             "stress_start": int(a), "stress_end": int(b),
+            "grid": grid,
             "stress_mean_vols": dict(zip([p.name for p in engine.profiles],
                                          mean_v))}
 
@@ -101,8 +130,7 @@ def stress_trajectories(engine, width: int = 252) -> Dict[str, pd.Series]:
                              min_variance, mlp_portfolio)
     prices, cfg = engine.prices, engine.cfg
     a, b = worst_window(prices, width)
-    lo = max(cfg.lookback, a)
-    grid = list(range(lo, max(lo + 1, b - cfg.horizon), cfg.horizon))
+    grid = stress_grid(a, b, cfg.lookback, cfg.horizon)
     if not grid:
         return {}
 
@@ -110,7 +138,8 @@ def stress_trajectories(engine, width: int = 252) -> Dict[str, pd.Series]:
         vals, idx = [1.0], [prices.index[grid[0]]]
         for t in grid:
             w = weight_fn(t)
-            seg = prices[w.index].iloc[t:t + cfg.horizon].pct_change().dropna()
+            t2 = min(t + cfg.horizon, b)
+            seg = prices[w.index].iloc[t:t2 + 1].pct_change().dropna()
             for date, r in (seg @ w.values).items():
                 vals.append(vals[-1] * (1.0 + float(r)))
                 idx.append(date)
