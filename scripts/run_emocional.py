@@ -69,7 +69,7 @@ def run(prices, n_by_group=30, seed=20260704, profile0="Pragmatist"):
 
 
 if __name__ == "__main__":
-    px = pd.read_csv(os.path.join(HERE, "..", "data", "us_precios.csv"),
+    px = pd.read_csv(os.path.join(HERE, "..", "data", "snapshot_oe4", "us_precios.csv"),
                      parse_dates=["Date"], index_col="Date")
     df = run(px)
     out = os.path.join(HERE, "..", "results")

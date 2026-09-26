@@ -14,7 +14,7 @@ from motor_owa.engine import RecommendationEngine
 from motor_owa.validation import split_70_20_10
 from oe4.benchmarks import equal_weight, min_variance, max_sharpe, mlp_portfolio, anfis_portfolio
 from oe4.pipeline import _perf
-from oe4.inference import diebold_mariano
+from oe4.inference import diebold_mariano, noninferiority_dm
 
 mkt, tramo = sys.argv[1], sys.argv[2]
 RES = os.path.join(HERE, "..", "results")
@@ -41,9 +41,24 @@ if tramo == "resumen":
     dmdf = pd.DataFrame(rows)
     dmdf.to_csv(os.path.join(RES, f"{mkt}_diebold_mariano.csv"), index=False)
     print(dmdf.to_string(index=False))
+    # No inferioridad / equivalencia con margen declarado (2026-09-25).
+    # Margen declarado: delta = 1 punto porcentual de retorno por horizonte
+    # trimestral (~4 pp anuales), un umbral holgado en terminos economicos
+    # que favorece la deteccion de no inferioridad. Se reporta tambien
+    # delta = 2 pp y, para cada contraste, el margen minimo delta* con el
+    # que se declararia no inferioridad al 5 % (limite unilateral), para que
+    # el lector aplique el margen que considere pertinente.
+    ni_rows = []
+    for a_, b_ in pares:
+        for delta in (0.01, 0.02):
+            r = noninferiority_dm(piv[a_].values, piv[b_].values, delta)
+            ni_rows.append({"A": a_, "B": b_, "delta": delta, **r})
+    nidf = pd.DataFrame(ni_rows)
+    nidf.to_csv(os.path.join(RES, f"{mkt}_no_inferioridad.csv"), index=False)
+    print(nidf.round(4).to_string(index=False))
     sys.exit(0)
 
-px = pd.read_csv(os.path.join(HERE, "..", "data", f"{mkt}_precios.csv"),
+px = pd.read_csv(os.path.join(HERE, "..", "data", "snapshot_oe4", f"{mkt}_precios.csv"),
                  parse_dates=["Date"], index_col="Date")
 cfg = EngineConfig(); eng = RecommendationEngine(px, cfg)
 t_grid = list(range(cfg.lookback, len(px) - cfg.horizon, cfg.horizon))

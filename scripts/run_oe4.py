@@ -20,16 +20,24 @@ def main():
     ap.add_argument("--market", choices=["co", "us", "both"], default="both")
     ap.add_argument("--quick", action="store_true")
     ap.add_argument("--start", default="2015-01-01")
+    ap.add_argument("--snapshot", default=os.path.join(HERE, "..", "data",
+                                                       "snapshot_oe4"),
+                    help="carpeta con {co,us}_precios.csv versionados; "
+                         "'yahoo' fuerza la descarga en vivo (no citable)")
+    ap.add_argument("--outdir", default=os.path.join(HERE, "..", "results"))
     args = ap.parse_args()
 
-    from motor_owa.data import load_yfinance, TICKERS_CO, TICKERS_US
-    outdir = os.path.join(HERE, "..", "results")
+    from motor_owa.data import load_yfinance, load_csv, TICKERS_CO, TICKERS_US
+    outdir = args.outdir
     todo = {"co": TICKERS_CO, "us": TICKERS_US}
     if args.market != "both":
         todo = {args.market: todo[args.market]}
     for mkt, tickers in todo.items():
-        print(f"[oe4] descargando {mkt.upper()} ({len(tickers)} activos)...")
-        px = load_yfinance(tickers, start=args.start)
+        if args.snapshot == "yahoo":
+            print(f"[oe4] descargando {mkt.upper()} ({len(tickers)} activos)...")
+            px = load_yfinance(tickers, start=args.start)
+        else:
+            px = load_csv(os.path.join(args.snapshot, f"{mkt}_precios.csv"))
         print(f"[oe4] {mkt.upper()}: {px.shape[0]} dias x {px.shape[1]} activos")
         res = run_market(px, mkt, outdir, quick=args.quick)
         print(res["comparadores"].round(4))
