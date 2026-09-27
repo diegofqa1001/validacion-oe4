@@ -11,7 +11,7 @@ dependencia: este repo contiene el *experimento*, aquel contiene el *artefacto*.
 
 ## Qué implementa (declarado en el anteproyecto)
 
-1. **Datos reales** CO (BVC, 17 emisores) y US (25 blue chips), 2015–presente,
+1. **Datos reales** CO (BVC, 15 emisores) y US (25 blue chips), 2015–presente,
    ventanas rodantes sin look-ahead, partición **70-20-10**.
 2. **Métricas**: RMSE, MAE, MAPE, NDCG@k, MRR, consistencia ordinal (vía
    motor-owa-v2) + coherencia conductual Spearman(orness, σ).
@@ -46,24 +46,37 @@ dependencia: este repo contiene el *experimento*, aquel contiene el *artefacto*.
 > `scripts/build_snapshot_oe4.py`). `scripts/reproducir_todo.sh` re-ejecuta
 > todo el protocolo y `scripts/comparar_con_archivo.py` contrasta el resultado
 > con los CSV de julio de 2026, conservados en `results/archivo_2026-07/`
-> (`results/comparacion_archivo_2026-07.csv`). Reproducen dentro de la
-> tolerancia de redondeo: registros y métricas del motor, coherencias +1,000 y
-> +0,929, matriz de migraciones y resumen del experimento OE4-E (λ̂ = 2,17).
-> Difieren y se sustituyen: (i) el comparador ANFIS (y los contrastes DM que lo
-> usan), cuya corrida de julio no es reproducible; 1/N, mínima varianza, máximo
-> Sharpe y MLP reproducen con el backend numpy (`OE4_BACKEND`, por defecto),
-> que es el que los produjo; (ii) la estabilidad ante ruido, cuyo archivo de
-> julio no corresponde al código publicado; (iii) el estrés, porque la rejilla
-> anterior omitía el último trimestre de la ventana (`stability.stress_grid`):
-> en Colombia la ventana completa (2-abr-2019 a 19-mar-2020) incluye el choque
-> de la COVID-19 y la coherencia en estrés pasa de +0,905 a −0,357
-> (−0,976 en el tramo dic-2019 a mar-2020; `results/co_estres_tramos.csv`);
-> en EE. UU. se mantiene en +1,000; (iv) `reduccion_riesgo_maximo.csv`, antes
+> (`results/comparacion_archivo_2026-07.csv`). Con el calendario del 26 de
+> septiembre (nota anterior), reproducen dentro de la tolerancia de redondeo
+> (5e-4) los registros, las métricas y la coherencia (+1,000) del motor en
+> EE. UU., la matriz de migraciones (`sensibilidad_perfil.csv`) y el resumen
+> del experimento OE4-E (`emocional_resumen.csv`, λ̂ = 2,17); en el detalle
+> individual de OE4-E coinciden brechas, migraciones y riqueza, y difiere la
+> λ̂ de algunos decisores. Todas las cifras de Colombia difieren, porque el
+> panel pasa de 45 a 40 ventanas (p. ej., coherencia del motor: +0,929 en el
+> archivo y +1,000 en la re-ejecución); las cifras citadas en la tesis son
+> siempre las de la re-ejecución.
+> Difieren y se sustituyen: (i) los comparadores (1/N, mínima varianza, máximo
+> Sharpe, MLP y ANFIS) y los contrastes de Diebold-Mariano, porque el archivo
+> de julio promedia 5 ventanas y la re-ejecución usa las 13 (EE. UU.) y 12
+> (Colombia) ventanas de verificación y validación de la Tabla 7.3; la corrida
+> ANFIS de julio, además, no es reproducible; (ii) la estabilidad ante ruido,
+> cuyo archivo de julio no corresponde al código publicado; (iii) el estrés,
+> porque la rejilla anterior omitía el último trimestre de la ventana
+> (`stability.stress_grid`) y, en Colombia, porque el nuevo calendario cambia
+> la ventana de peor caída del mercado: hoy es del 7-feb-2022 al 2-mar-2023,
+> con coherencia en estrés de +0,429 (`results/co_estres.csv` y
+> `results/co_estres_tramos.csv`), frente a +0,905 en el archivo;
+> en EE. UU. la coherencia en estrés se mantiene en +1,000 y las volatilidades
+> por perfil difieren a lo sumo en 0,008; (iv) `reduccion_riesgo_maximo.csv`, antes
 > sin generador y con n = 5, ahora lo produce `scripts/run_reduccion_riesgo.py`
-> sobre las 13 y 14 ventanas de la Tabla 7.3. Se añadió
+> sobre las 13 y 12 ventanas de la Tabla 7.3 (la reducción de caída máxima
+> del Guardián frente a 1/N en EE. UU. pasa del 10,6 % del archivo a −2,3 %). Se añadió
 > `{us,co}_no_inferioridad.csv` (no inferioridad unilateral y TOST con margen
 > δ = 1 y 2 puntos porcentuales por trimestre). Las notas del 17 de agosto que
-> siguen describen el estado anterior.
+> siguen describen el estado de esa fecha: sus cifras (p. ej., el 10,6 %) y la
+> mención de un `data/us_precios.csv` no versionado quedan sustituidas por
+> `results/` y `data/snapshot_oe4/`.
 
 > **Nota de verificación (añadida 2026-08-17).** Los cinco comparadores del
 > §7.4 de la tesis (1/N, mínima varianza, máximo Sharpe, MLP, ANFIS) y el test
