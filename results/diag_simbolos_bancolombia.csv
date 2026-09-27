@@ -1,0 +1,6 @@
+simbolo,con_serie,n_meses,primera_fecha,ultima_fecha,nombre,bolsa,mensaje_fuente,consulta_utc
+BCOLOMBIA.CL,False,0,,,,,"No data found, symbol may be delisted",2026-09-27T01:09Z
+PFBCOLOM.CL,False,0,,,,,"No data found, symbol may be delisted",2026-09-27T01:09Z
+CIBEST.CL,True,139,2015-01-01,2026-07-01,Grupo Cibest S.A.,BVC,,2026-09-27T01:09Z
+PFCIBEST.CL,True,139,2015-01-01,2026-07-01,Grupo Cibest S.A.,BVC,,2026-09-27T01:09Z
+CIB,True,139,2015-01-01,2026-07-01,Grupo Cibest S.A.,NYQ,,2026-09-27T01:09Z
