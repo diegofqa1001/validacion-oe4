@@ -1,16 +1,17 @@
-"""Diagnostico de la ausencia de Bancolombia en los universos colombianos.
+"""Diagnostico de los simbolos de Bancolombia en la fuente de datos.
 
-Los universos colombianos solicitaron simbolos historicos de Bancolombia:
-repo_OWA (Cap. 5 y §8.4) solicito PFBCOLOM.CL (preferencial;
-repo_OWA/data/snapshot_2026-08-31/MANIFEST_precios_origen.md) y
-validacion-oe4 (Cap. 7) solicito BCOLOMBIA.CL (ordinaria) y PFBCOLOM.CL
-(data/snapshot_oe4/MANIFEST.json, "sin_serie_en_yahoo"). La fuente no
-devolvio serie para ninguno de ellos. Este guion
-consulta el mismo endpoint (Yahoo Finance v8/finance/chart, frecuencia
-mensual) para los simbolos historicos y para los simbolos vigentes del emisor
-tras su reorganizacion como Grupo Cibest (CIBEST.CL, PFCIBEST.CL y el ADR
-CIB), y registra si hay serie, su primera y ultima fecha y el nombre que la
-fuente asigna. No modifica ningun resultado de la tesis.
+Bancolombia forma parte de los universos colombianos. Tras su reorganizacion
+societaria como Grupo Cibest, la fuente (Yahoo Finance) publica su historia
+completa desde 2015 bajo los simbolos vigentes CIBEST.CL (ordinaria) y
+PFCIBEST.CL (preferencial), mientras que los simbolos historicos BCOLOMBIA.CL
+y PFBCOLOM.CL ya no devuelven serie. Por eso validacion-oe4 (Cap. 7) incluye
+a Bancolombia mediante CIBEST.CL y PFCIBEST.CL
+(data/snapshot_oe4/MANIFEST.json) y repo_OWA (Cap. 5 y apartado 8.4) mediante
+PFCIBEST.CL. Este guion consulta el mismo endpoint (Yahoo Finance
+v8/finance/chart, frecuencia mensual) para los simbolos historicos y los
+vigentes (incluido el ADR CIB) y registra si hay serie, su primera y ultima
+fecha y el nombre que la fuente asigna. Documenta la eleccion de simbolos;
+no modifica ningun resultado.
 
 Uso: python scripts/diag_simbolos_bancolombia.py
 Salida: results/diag_simbolos_bancolombia.csv

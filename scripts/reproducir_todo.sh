@@ -11,4 +11,5 @@ for m in us co; do
   python3 scripts/run_comparadores_ampliado.py $m resumen
 done
 python3 scripts/run_reduccion_riesgo.py
+python3 scripts/dm_holm.py
 python3 scripts/run_emocional.py
