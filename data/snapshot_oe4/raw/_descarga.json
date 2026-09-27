@@ -1,1 +1,9 @@
-{"fecha_descarga_utc": "2026-09-26T00:44Z", "sin_serie_en_yahoo": ["BCOLOMBIA.CL", "PFBCOLOM.CL"]}
+{
+ "fecha_descarga_utc": "2026-09-26T00:44Z",
+ "sin_serie_en_yahoo": [],
+ "descarga_complementaria_utc": {
+  "CIBEST.CL": "2026-09-27T02:57Z",
+  "PFCIBEST.CL": "2026-09-27T02:57Z"
+ },
+ "nota": "Bancolombia (BCOLOMBIA.CL, PFBCOLOM.CL) cotiza bajo los simbolos de Grupo Cibest (CIBEST.CL, PFCIBEST.CL) tras su reorganizacion societaria; la fuente publica bajo ellos la historia completa."
+}
