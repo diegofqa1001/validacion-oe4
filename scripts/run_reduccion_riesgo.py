@@ -2,7 +2,7 @@
 
 Calcula, sobre las MISMAS ventanas de verificacion + validacion de la
 Tabla 7.3 (results/{us,co}_comp_ampliado_registros.csv: 13 ventanas en
-EE. UU. y 14 en Colombia), la caida maxima media por ventana del perfil
+EE. UU. y 12 en Colombia), la caida maxima media por ventana del perfil
 objetivo (OWA-Guardian) frente a cada comparador y al perfil opuesto
 (OWA-Visionary), y la reduccion relativa
 
