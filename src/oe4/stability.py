@@ -64,10 +64,9 @@ def stress_grid(a: int, b: int, lookback: int, horizon: int) -> List[int]:
     retornos diarios de (t, min(t + horizon, b)], de modo que los tramos
     encadenados cubren (a, b] sin huecos ni solapes.
 
-    Correccion 2026-09-25: la version anterior usaba
-    range(lo, b - horizon, horizon) con tramos iloc[t:t + horizon], que
-    dejaba fuera el ultimo trimestre de la ventana (en Colombia, el choque de
-    febrero-marzo de 2020) y omitia el retorno del dia de cada rebalanceo.
+    El rango llega hasta b (no hasta b - horizon), de modo que el ultimo
+    trimestre de la ventana queda incluido, y cada tramo incluye el retorno
+    del dia siguiente a su rebalanceo.
     """
     lo = max(lookback, a)
     return list(range(lo, b, horizon))
