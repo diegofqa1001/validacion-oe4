@@ -6,9 +6,9 @@ from motor_owa.viz_es import (NOMBRES_ES, COMPARADORES_ES, OKABE_ITO, coma,  # n
                               ejes_coma, estilo, guardar)
 from matplotlib.colors import LinearSegmentedColormap
 
-#: divergente Okabe-Ito: bermellon (hacia la prudencia) - blanco - azul
+#: divergente: gris oscuro (hacia la prudencia) - blanco - azul marino
 DIVERGENTE_OI = LinearSegmentedColormap.from_list(
-    "oi_div", ["#D55E00", "#FFFFFF", "#0072B2"])
+    "oi_div", ["#3F3F3F", "#FFFFFF", "#1F3A5F"])
 MESES = ["ene", "feb", "mar", "abr", "may", "jun", "jul", "ago", "sep",
          "oct", "nov", "dic"]
 

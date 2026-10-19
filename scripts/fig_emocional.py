@@ -22,7 +22,7 @@ res = pd.read_csv(os.path.join(RES, "emocional_resumen.csv"), index_col=0)
 cfg = EngineConfig()
 fig, axes = plt.subplots(1, 2, figsize=(11.5, 4.4))
 ax = axes[0]
-for g, c, et in [("logico", "#0072B2", "lógicos"), ("emocional", "#E69F00", "emocionales")]:
+for g, c, et in [("logico", "#1F3A5F", "lógicos"), ("emocional", "#8C8C8C", "emocionales")]:
     v = ind.loc[ind.grupo == g, "mean_abs_gap"]
     ax.hist(v, bins=14, color=c, edgecolor="black", lw=0.5, alpha=0.85,
             label=f"{et} (n = {len(v)})")
@@ -34,8 +34,8 @@ estilo(ax); ejes_coma(ax)
 ax = axes[1]
 lam = ind.loc[ind.grupo == "logico", "lambda_hat"].dropna()
 n_neg, n_alto = int((lam < 0).sum()), int((lam > 6).sum())
-ax.hist(lam, bins=12, range=(0, 6), color="#009E73", edgecolor="black", lw=0.5)
-ax.axvline(cfg.loss_lambda, color="#D55E00", ls="--", lw=2,
+ax.hist(lam, bins=12, range=(0, 6), color="#4F6D8F", edgecolor="black", lw=0.5)
+ax.axvline(cfg.loss_lambda, color="#3F3F3F", ls="--", lw=2,
            label=f"λ sembrado = {coma(cfg.loss_lambda, 2)}")
 med = float(res.loc["logico", "lambda_estimado"])
 ax.axvline(med, color="black", ls=":", lw=2, label=f"mediana estimada = {coma(med, 2)}")

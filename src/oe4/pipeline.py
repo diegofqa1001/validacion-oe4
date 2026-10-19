@@ -8,7 +8,7 @@ Para cada mercado:
      max-Sharpe (media-varianza), red neuronal (MLP) y ANFIS.
   3. Estabilidad: ruido sobre criterios, estres (peor subperiodo),
      sensibilidad al cambio de perfil.
-Salidas: CSV en results/ y figuras Okabe-Ito en figures/.
+Salidas: CSV en results/ y figuras en azul marino y grises en figures/.
 """
 from __future__ import annotations
 

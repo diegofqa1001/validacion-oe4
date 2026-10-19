@@ -1,7 +1,7 @@
 """Figura 7.2 -- Migracion de perfil (octiles) segun la sorpresa estandarizada.
 
 Lee results/sensibilidad_perfil.csv (independiente del mercado).
-Salida: figures/F31_migracion.png (rotulos en espanol, paleta Okabe-Ito).
+Salida: figures/F31_migracion.png (rotulos en espanol, paleta institucional (azul marino y grises)).
 """
 import os, sys
 HERE = os.path.dirname(os.path.abspath(__file__))
