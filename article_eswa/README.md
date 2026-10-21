@@ -46,3 +46,16 @@ Requirements: numpy, pandas, scipy, matplotlib (see `requirements.txt`).
 | Profile-window cells with attained volatility > 1% away from target | 30.8% | 17.2% |
 
 Universes are made of issuers listed at the download date (survivorship bias, declared in the article).
+
+## Stage 2 diagnostics (`range_diagnostics.py`)
+
+Re-runs Stage 2 on the versioned snapshot (`data/snapshot_oe4/`) with `owa-recommender`
+(numerically identical to the versioned records: maximum absolute difference 0.0) and
+records, per profile and window, the volatility range attainable with the profile's own
+defensive and aggressive funds.
+
+| | United States | Colombia |
+|---|---|---|
+| Windows where the common range needed the safety bound | 0 of 43 | 0 of 40 |
+| Cells with target below the profile's attainable range | 11.3% (Guardian 65.1%, Sentinel 23.3%) | 10.6% (Guardian 55.0%, Sentinel 25.0%) |
+| Cells with target above the profile's attainable range | 21.2% (Innovator 46.5%, Adventurer 41.9%) | 8.1% (Visionary 15.0%) |
