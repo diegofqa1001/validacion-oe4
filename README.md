@@ -105,3 +105,11 @@ https://github.com/diegofqa1001/validacion-oe4
 
 ## Licencia
 MIT (código); CC-BY-4.0 (contenido).
+
+## Figura del artículo derivado sobre adaptación del orness
+
+`figures_article_a4/make_fig3.py` genera la Figura 3 del artículo *Who should adapt the
+investor's risk attitude? Regime-induced orness and investor-declared profile updating in
+OWA-based portfolio recommendation* (en evaluación) a partir de `results/emocional_individual.csv`
+(`scripts/run_emocional.py`). La tabla de migraciones del artículo es `results/sensibilidad_perfil.csv`
+(`src/oe4/stability.py`).
