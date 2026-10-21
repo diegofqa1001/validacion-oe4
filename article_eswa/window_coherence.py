@@ -113,3 +113,24 @@ for mkt in ["us", "co"]:
                  "guardian_share_of_misses": (d.loc[bad, "profile"] == "Guardian").mean()})
 pd.DataFrame(miss).to_csv(OUT / "attainment_misses.csv", index=False)
 print(pd.DataFrame(miss))
+
+# moving-block bootstrap (blocks of 4 consecutive windows = one year) for the realised layer,
+# to account for persistence of volatility regimes and overlapping estimation windows
+rng = np.random.default_rng(20261021)
+boot = []
+for mkt, g in win.groupby("market"):
+    g = g.sort_values("t")
+    for col in ["rho_realised", "pairs_realised"]:
+        x = g[col].values; n = len(x); L = 4
+        starts = np.arange(n - L + 1)
+        means = []
+        for _ in range(10000):
+            idx = np.concatenate([np.arange(s, s + L) for s in rng.choice(starts, int(np.ceil(n / L)))])[:n]
+            means.append(x[idx].mean())
+        means = np.array(means)
+        ref = 0.0 if col == "rho_realised" else 0.5
+        boot.append({"market": mkt, "statistic": col, "mean": x.mean(),
+                     "ci95_low": np.quantile(means, 0.025), "ci95_high": np.quantile(means, 0.975),
+                     "share_boot_le_chance": float((means <= ref).mean())})
+pd.DataFrame(boot).to_csv(OUT / "block_bootstrap.csv", index=False)
+print(pd.DataFrame(boot))

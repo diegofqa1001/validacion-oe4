@@ -40,10 +40,10 @@ def arrow(x1, y1, x2, y2, c=GREY_D, ls="-"):
 
 # row 1: profile elicitation and the two stages
 box(0, 64, 46, 25, "Investor profile",
-    "Questionnaire (eight dimensions)\n→ latent score $z$\n→ octile profile $k=1,\\ldots,8$\n"
+    "Questionnaire (seven dimensions)\n→ latent score $z$\n→ octile profile $k=1,\\ldots,8$\n"
     "→ orness anchor $\\alpha_k=(2k-1)/16$")
 box(51, 64, 61, 25, "Stage 1 · Asset selection",
-    "Four criteria per asset (return, low volatility,\nlow drawdown, liquidity), causal window\n"
+    "Four criteria per asset (return, low volatility,\nlow drawdown, volatility stability), causal window\n"
     "OWA score with RIM weights of orness $\\alpha_k$\nbest-scored assets in each volatility stratum",
     fc=FILL_N, ec=NAVY, tc=NAVY)
 box(117, 64, 57, 25, "Stage 2 · Risk control",
@@ -60,7 +60,7 @@ ax.text(145.5, 61.0, "the profile decides how much risk", ha="center", fontsize=
 box(0, 32, 46, 22, "Rebalancing",
     "every 63 business days\n126-day estimation window\n10 bp cost per rebalance")
 box(51, 32, 61, 22, "Traceability log",
-    "questionnaire → $z$ → $k$ → $\\alpha_k$ → scores\n→ selected assets → $\\theta$ → weights\n"
+    "latent score $z$ → $k$ → $\\alpha_k$ → scores\n→ selected assets → $\\theta$ → weights\n"
     "stored for audit (suitability)")
 box(117, 32, 57, 22, "Recommendation",
     "eight portfolios, one per profile:\nweights, expected return and volatility\n"

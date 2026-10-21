@@ -67,7 +67,7 @@ for ax, mkt in zip(axes, ["US", "CO"]):
     for i, (d, c) in enumerate(zip(data, colors), start=1):
         x = i + rng.uniform(-0.16, 0.16, size=len(d))
         ax.scatter(x, d, s=6, color=c if c != GREY_L else GREY_M, edgecolor="none", alpha=0.9, zorder=3)
-        ax.text(i, -1.12, f"mean {d.mean():.2f}\nperfect {np.mean(d > 0.9999):.0%}",
+        ax.text(i, -1.12, f"mean {d.mean():.2f}\nperfect {100*np.mean(d > 0.9999):.1f}%",
                 ha="center", va="bottom", fontsize=6.3, color=GREY_D)
     ax.axhline(0, color=GREY_M, lw=0.6, ls=":")
     ax.set_xticks([1, 2, 3], [l for _, l in levels])

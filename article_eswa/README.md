@@ -59,3 +59,22 @@ defensive and aggressive funds.
 | Windows where the common range needed the safety bound | 0 of 43 | 0 of 40 |
 | Cells with target below the profile's attainable range | 11.3% (Guardian 65.1%, Sentinel 23.3%) | 10.6% (Guardian 55.0%, Sentinel 25.0%) |
 | Cells with target above the profile's attainable range | 21.2% (Innovator 46.5%, Adventurer 41.9%) | 8.1% (Visionary 15.0%) |
+
+## Stress robustness and market descriptors (`stress_robustness.py`)
+
+The stress window of `src/oe4/stability.worst_window` is the 252-day window of largest fall of the
+simple average of adjusted price levels (a price-weighted index). The script repeats the stress test
+with the window of largest fall of an equally weighted return index and records, per rebalance,
+sigma_agg / sigma_def and the mean pairwise correlation of daily returns over the holding period.
+
+| | Price-level average | Equally weighted returns |
+|---|---|---|
+| United States window | 2022-01-04 to 2023-01-05, rho = 1.000 | 2021-12-28 to 2022-12-28, rho = 1.000 |
+| Colombia window | 2019-02-06 to 2020-03-19, rho = 0.310 | 2022-02-25 to 2023-03-23, rho = 0.405 |
+
+Full-sample descriptors: mean pairwise correlation of daily returns 0.359 (US) and 0.189 (CO);
+share of exactly zero daily returns 0.4% (US) and 15.8% (CO). The Colombian universe holds 17 shares of
+16 issuers (ordinary and preferred shares of Grupo Cibest).
+
+`window_coherence.py` also writes `output/block_bootstrap.csv`: moving-block bootstrap (blocks of four
+windows, 10,000 replications) of the mean realised rho and of the share of correctly ordered pairs.
