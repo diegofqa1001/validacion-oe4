@@ -1,0 +1,21 @@
+{
+  "title": "validacion-oe4: Internal validation of the recommendation engine",
+  "upload_type": "software",
+  "creators": [
+    {
+      "name": "Quintero-Avellaneda, Diego",
+      "affiliation": "Faculty of Administration, Universidad Nacional de Colombia (National University of Colombia), Manizales Campus",
+      "orcid": "0009-0008-2422-5374"
+    }
+  ],
+  "description": "Price snapshots with SHA-256 checksums, evaluation scripts and results of the internal validation of the adaptive portfolio recommendation engine (owa-recommender): window-level suitability in three layers (target, attained ex ante, realised), Stage 2 range diagnostics, stress robustness, ranking quality and comparison with benchmarks in the United States and Colombia. Doctoral thesis of Diego Quintero-Avellaneda, Universidad Nacional de Colombia, Manizales Campus.",
+  "license": "MIT",
+  "version": "1.0.0",
+  "keywords": [
+    "portfolio recommendation",
+    "OWA operators",
+    "suitability",
+    "internal validation",
+    "backtesting"
+  ]
+}

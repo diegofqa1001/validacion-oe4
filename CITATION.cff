@@ -1,0 +1,18 @@
+cff-version: 1.2.0
+message: "If you use this software or data, please cite them using these metadata."
+title: "validacion-oe4: Internal validation of the recommendation engine"
+authors:
+  - family-names: "Quintero-Avellaneda"
+    given-names: "Diego"
+    orcid: "https://orcid.org/0009-0008-2422-5374"
+    affiliation: "Faculty of Administration, Universidad Nacional de Colombia (National University of Colombia), Manizales Campus"
+version: "1.0.0"
+date-released: "2026-10-26"
+license: MIT
+repository-code: "https://github.com/diegofqa1001/validacion-oe4"
+keywords:
+  - portfolio recommendation
+  - OWA operators
+  - suitability
+  - internal validation
+  - backtesting

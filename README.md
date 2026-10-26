@@ -9,6 +9,11 @@ Respalda el Capítulo 7 de la monografía.
 Es **independiente** del repositorio del motor
 ([motor-owa-v2](https://github.com/diegofqa1001/motor-owa-v2)), que usa como
 dependencia: este repositorio contiene el *experimento*; aquel, el *artefacto*.
+La versión publicada del motor es
+[owa-recommender](https://github.com/diegofqa1001/owa-recommender) (versión 2.1.0),
+que continúa la historia de motor-owa-v2 con el paquete renombrado `owa_recommender`;
+`article_eswa/range_diagnostics.py` verifica que esa versión reproduce exactamente
+las carteras registradas.
 
 ## Datos
 
